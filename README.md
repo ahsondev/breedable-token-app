@@ -1,1 +1,1 @@
-# brain-dance-ticket-app
+# brain-dance-mint-app
