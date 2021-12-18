@@ -1,0 +1,27 @@
+{
+  "files": {
+    "main.css": "/static/css/main.85aad28a.chunk.css",
+    "main.js": "/static/js/main.67fe71b4.chunk.js",
+    "main.js.map": "/static/js/main.67fe71b4.chunk.js.map",
+    "runtime-main.js": "/static/js/runtime-main.04db8726.js",
+    "runtime-main.js.map": "/static/js/runtime-main.04db8726.js.map",
+    "static/css/2.a4a457b0.chunk.css": "/static/css/2.a4a457b0.chunk.css",
+    "static/js/2.1b282c8a.chunk.js": "/static/js/2.1b282c8a.chunk.js",
+    "static/js/2.1b282c8a.chunk.js.map": "/static/js/2.1b282c8a.chunk.js.map",
+    "static/js/3.86f5fac6.chunk.js": "/static/js/3.86f5fac6.chunk.js",
+    "static/js/3.86f5fac6.chunk.js.map": "/static/js/3.86f5fac6.chunk.js.map",
+    "index.html": "/index.html",
+    "static/css/2.a4a457b0.chunk.css.map": "/static/css/2.a4a457b0.chunk.css.map",
+    "static/css/main.85aad28a.chunk.css.map": "/static/css/main.85aad28a.chunk.css.map",
+    "static/js/2.1b282c8a.chunk.js.LICENSE.txt": "/static/js/2.1b282c8a.chunk.js.LICENSE.txt",
+    "static/media/app.scss": "/static/media/Lato-Thin.01923cbb.ttf",
+    "static/media/notifications.css": "/static/media/notification.c5d9251e.ttf"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.04db8726.js",
+    "static/css/2.a4a457b0.chunk.css",
+    "static/js/2.1b282c8a.chunk.js",
+    "static/css/main.85aad28a.chunk.css",
+    "static/js/main.67fe71b4.chunk.js"
+  ]
+}
