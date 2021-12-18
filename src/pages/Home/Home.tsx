@@ -43,18 +43,18 @@ const Home = (props: Props) => {
       metamaskAccount: ''
     }
 
-    // if (connectRes) {
-    //   obj.contract = connectRes.contract
-    //   obj.web3 = connectRes.web3
-    //   obj.metamaskAccount = wnd.ethereum.selectedAddress
-    //   obj.price = await connectRes.contract.methods.ticketPrice().call()
-    //   obj.paused = await connectRes.contract.methods.ticketPaused().call()
-    //   const preslaeAddressLimit = await connectRes.contract.methods.preslaeAddressLimit().call()
-    //   const presaleReservedAddressCount = await connectRes.contract.methods.presaleReservedAddressCount().call()
-    //   obj.remainTokenCount = preslaeAddressLimit - presaleReservedAddressCount
-    //   setRemainTokenCount(obj.remainTokenCount)
-    //   setContract(connectRes.contract)
-    // }
+    if (connectRes) {
+      obj.contract = connectRes.contract
+      obj.web3 = connectRes.web3
+      obj.metamaskAccount = wnd.ethereum.selectedAddress
+      obj.price = await connectRes.contract.methods.ticketPrice().call()
+      obj.paused = await connectRes.contract.methods.ticketPaused().call()
+      const preslaeAddressLimit = await connectRes.contract.methods.preslaeAddressLimit().call()
+      const presaleReservedAddressCount = await connectRes.contract.methods.presaleReservedAddressCount().call()
+      obj.remainTokenCount = preslaeAddressLimit - presaleReservedAddressCount
+      setRemainTokenCount(obj.remainTokenCount)
+      setContract(connectRes.contract)
+    }
     return obj
   }
 
