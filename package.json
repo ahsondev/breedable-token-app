@@ -12,8 +12,10 @@
     "@types/node": "^12.0.0",
     "@types/react": "^17.0.0",
     "@types/react-dom": "^17.0.0",
+    "@walletconnect/web3-provider": "1.7.0",
     "axios": "0.21.1",
     "base-path-converter": "^1.0.2",
+    "bigint-crypto-utils": "3.0.21",
     "bnc-onboard": "^1.35.4",
     "body-parser": "^1.19.0",
     "btoa": "^1.2.1",
@@ -29,9 +31,6 @@
     "express-validator": "^6.13.0",
     "fs-extra": "^10.0.0",
     "jsonwebtoken": "^8.5.1",
-    "keccak256": "1.0.3",
-    "merkle-patricia-tree": "4.2.2",
-    "merkletreejs": "0.2.24",
     "moment": "^2.29.1",
     "mysql2": "2.3.3",
     "node-fetch": "2.6.6",
@@ -60,7 +59,8 @@
     "sequelize": "6.11.0",
     "typescript": "^4.1.2",
     "web-vitals": "^1.0.1",
-    "web3": "^1.6.1"
+    "web3": "^1.6.1",
+    "web3modal": "^1.9.4"
   },
   "scripts": {
     "dev:client": "cross-env NODE_ENV=development craco start",

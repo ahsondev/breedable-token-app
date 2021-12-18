@@ -1,6 +1,6 @@
 module.exports = (connectionSeq, Sequelize) => {
   const Model = connectionSeq.define(
-    'WhiteList',
+    'Ticket',
     {
       id: {
         type: Sequelize.INTEGER,
@@ -13,7 +13,7 @@ module.exports = (connectionSeq, Sequelize) => {
       },
     },
     {
-      tableName: 'whitelists',
+      tableName: 'tickets',
     }
   )
 

@@ -14,7 +14,7 @@ if (process.env.NODE_ENV === 'development') {
 
 const config = {
   ...env,
-  appID: 'BrainDance',
+  appID: 'BDTicket',
   networks: {
     mainnet: {
       chainId: '0x1',
