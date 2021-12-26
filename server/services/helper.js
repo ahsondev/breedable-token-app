@@ -17,12 +17,7 @@ const round = (v, digits) => {
   return Math.round(v * factorial) / factorial
 }
 
-const getUTCSeconds = () => {
-  const utcMilliseconds = new Date(
-    Date.now() + new Date().getTimezoneOffset() * 60000
-  ).getTime() / 1000
-  return Math.round(utcMilliseconds)
-}
+const getUTCSeconds = () => Math.round(new Date().getTime() / 1000)
 
 module.exports = {
   encrypt,

@@ -46,12 +46,13 @@ export class BrainDance {
     this.nativeContract = contract
   }
 
-  buyTicket(addr: string, mintPricePerToken: number, sign: number) {
+  buyTicket(addr: string, price: number) {
     const tx = {
       from: addr,
       to: contractConfig.contractAddress,
-      value: mintPricePerToken,
-      data: this.nativeContract.methods.buyTicket(sign).encodeABI(),
+      gas: 300000, // 500 000 gas
+      value: price,
+      data: this.nativeContract.methods.buyTicket().encodeABI(),
     }
     return web3.eth.sendTransaction(tx)
   }

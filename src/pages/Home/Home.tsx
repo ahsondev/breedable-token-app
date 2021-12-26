@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { BrainDance, connectToWallet } from 'utils/web3_api'
 import { NotificationManager } from 'components/Notification'
 import Loader from 'components/Loader'
@@ -7,6 +7,8 @@ import { GoogleReCaptchaProvider } from 'react-google-recaptcha-v3';
 import MintButton from 'components/MintButton'
 import './Home.scoped.scss'
 import { decrypt, headerToken } from 'utils/helper'
+import {connectToMetamask, getAccountStatus, getContractStatus} from 'actions/contract'
+import { useDispatch, useSelector } from 'react-redux'
 
 const wnd = window as any
 
@@ -14,75 +16,70 @@ interface Props {}
 
 const Home = (props: Props) => {
   const [loading, setLoading] = useState(false)
-  const [remainTokenCount, setRemainTokenCount] = useState(0)
-  const [contract, setContract] = useState<any>(null)
+  const web3 = useSelector((state: any) => state.contract.web3)
+  const contract = useSelector((state: any) => state.contract.contract)
+  const price = useSelector((state: any) => state.contract.price)
+  const statusFlag = useSelector((state: any) => state.contract.statusFlag)
+  const presaleReservedTokenCount = useSelector((state: any) => state.contract.presaleReservedTokenCount)
+  const presaleReservedAddressCount = useSelector((state: any) => state.contract.presaleReservedAddressCount)
+  const presaleTokenCount = useSelector((state: any) => state.contract.presaleTokenCount)
+  const presaleAddressLimit = useSelector((state: any) => state.contract.presaleAddressLimit)
+  const ticketCount = useSelector((state: any) => state.contract.ticketCount)
+  const dispatch = useDispatch() as any
+
+  const onTimer = useCallback(async () => {
+    dispatch(getContractStatus(contract))
+    dispatch(getAccountStatus(contract, wnd.ethereum.selectedAddress))
+  }, [contract])
+
+  useEffect(() => {
+    dispatch(connectToMetamask()).then((res: any) => {
+      dispatch(getContractStatus(res.contract))
+      dispatch(getAccountStatus(res.contract, wnd.ethereum.selectedAddress))
+    }, (err: any) => {})
+  }, [])
 
   useEffect(() => {
     const counter = setInterval(onTimer, 4000)
     return (() => {
       clearInterval(counter)
     })
-  }, [])
-
-  const onTimer = async () => {
-    if (contract) {
-      const preslaeAddressLimit = await contract.methods.preslaeAddressLimit().call()
-      const presaleReservedAddressCount = await contract.methods.presaleReservedAddressCount().call()
-      setRemainTokenCount(preslaeAddressLimit - presaleReservedAddressCount)
-    }
-  }
-
-  const connectMetamask = async () => {
-    const connectRes = await connectToWallet()
-    const obj = {
-      contract: null as any,
-      web3: null as any,
-      price: 0,
-      paused: true,
-      remainTokenCount: 0,
-      metamaskAccount: ''
-    }
-
-    if (connectRes) {
-      obj.contract = connectRes.contract
-      obj.web3 = connectRes.web3
-      obj.metamaskAccount = wnd.ethereum.selectedAddress
-      obj.price = await connectRes.contract.methods.ticketPrice().call()
-      obj.paused = await connectRes.contract.methods.ticketPaused().call()
-      const preslaeAddressLimit = await connectRes.contract.methods.preslaeAddressLimit().call()
-      const presaleReservedAddressCount = await connectRes.contract.methods.presaleReservedAddressCount().call()
-      obj.remainTokenCount = preslaeAddressLimit - presaleReservedAddressCount
-      setRemainTokenCount(obj.remainTokenCount)
-      setContract(connectRes.contract)
-    }
-    return obj
-  }
+  }, [onTimer])
 
   const handleBuyTicket = async () => {
-    const obj = await connectMetamask()
-    console.log(obj)
-    if (!obj.metamaskAccount) {
+    const account = wnd.ethereum.selectedAddress
+
+    if (!account) {
       NotificationManager.warning('You are not connected to wallet', 'Not connected')
       return
     }
-    if (obj.paused) {
-      NotificationManager.warning('Minting was paused by owner', 'Paused')
+
+    if (Number(window.ethereum.networkVersion) !== 4) {
+      NotificationManager.warning('Please connect to the mainnet', 'Network error')
+      return
+    }
+
+    if (statusFlag === 0) {
+      NotificationManager.warning('Ticket sale is not started', 'Not started')
+      return
+    }
+
+    if (statusFlag > 1) {
+      NotificationManager.warning('Ticket sale has ended', 'Ticket sale ended')
       return
     }
 
     setLoading(true)
     try {
-      const {data} = await api.post('/buy-ticket',
-        { address: obj.metamaskAccount },
-        { headers: headerToken(obj.metamaskAccount) })
-      const sign = Number(decrypt(data.token))
-      const contract = new BrainDance(obj.contract)
-      await contract.buyTicket(obj.metamaskAccount, obj.price, sign)
+      await api.post('/buy-ticket',
+        { address: account },
+        { headers: headerToken(account) })
+      const contractBD = new BrainDance(contract)
+      await contractBD.buyTicket(account, price)
       NotificationManager.info('Successfully bought a ticket', 'Success')
     } catch (e) {
       console.log(e)
-      NotificationManager.error('Please check if you are online', 'Server Error')
-      setLoading(false)
+      NotificationManager.error('You failed buying a ticket', 'Failed')
     }
     setLoading(false)
   }
@@ -91,7 +88,7 @@ const Home = (props: Props) => {
     <div className='home-page'>
       <div className='container'>
         <div className='characters'>
-          {/* <div className='animation-wrapper'>
+          <div className='animation-wrapper'>
             <iframe src="/Boy LifeTank.33/Boy Life Tank.33.html"
               allowFullScreen={true}
               frameBorder="0"
@@ -106,16 +103,31 @@ const Home = (props: Props) => {
               scrolling="no"
               title="GirlLife"
             />
-          </div> */}
+          </div>
         </div>
         <div className='button-wrapper'>
-   
-          <div className="publicsale-container">
-            <div className='title'>{remainTokenCount === 0 ? "Sold out" : "Buy Tickets"}</div>
-          </div>
+          {statusFlag === 0 && (
+            <div className='title'>Not started</div>
+          )}
+          {statusFlag > 1 && (
+            <>
+              <div className='title'>Sale ended</div>
+              <div className='info'>
+                You have bought <span>{ticketCount}</span> tickets
+              </div>
+            </>
+          )}
+          {statusFlag === 1 && (
+            <>
+              <div className='title'>{presaleAddressLimit - presaleReservedAddressCount === 0 && ticketCount === 0? "Sold out" : "Buy Tickets"}</div>
+              <div className='info'>
+                You have bought <span>{ticketCount}</span> tickets
+              </div>
+            </>
+          )}
           
           <GoogleReCaptchaProvider reCaptchaKey={process.env.REACT_APP_RECAPTCHA_SITE_KEY}>
-            <MintButton onMint={() => handleBuyTicket()} />
+            <MintButton onMint={() => handleBuyTicket()} disabled={ticketCount >= 3 || statusFlag !== 1 || (presaleAddressLimit - presaleReservedAddressCount > 0 && ticketCount === 0)} />
           </GoogleReCaptchaProvider>
         </div>
       </div>
