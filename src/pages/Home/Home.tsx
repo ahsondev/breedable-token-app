@@ -1,12 +1,12 @@
 import { useEffect, useState, useCallback } from 'react'
-import { BrainDance, connectToWallet } from 'utils/web3_api'
+import { BrainDance } from 'utils/web3_api'
 import { NotificationManager } from 'components/Notification'
 import Loader from 'components/Loader'
 import api from 'utils/api'
 import { GoogleReCaptchaProvider } from 'react-google-recaptcha-v3';
 import MintButton from 'components/MintButton'
 import './Home.scoped.scss'
-import { decrypt, headerToken } from 'utils/helper'
+import { headerToken } from 'utils/helper'
 import {connectToMetamask, getAccountStatus, getContractStatus} from 'actions/contract'
 import { useDispatch, useSelector } from 'react-redux'
 
@@ -16,13 +16,10 @@ interface Props {}
 
 const Home = (props: Props) => {
   const [loading, setLoading] = useState(false)
-  const web3 = useSelector((state: any) => state.contract.web3)
   const contract = useSelector((state: any) => state.contract.contract)
   const price = useSelector((state: any) => state.contract.price)
   const statusFlag = useSelector((state: any) => state.contract.statusFlag)
-  const presaleReservedTokenCount = useSelector((state: any) => state.contract.presaleReservedTokenCount)
   const presaleReservedAddressCount = useSelector((state: any) => state.contract.presaleReservedAddressCount)
-  const presaleTokenCount = useSelector((state: any) => state.contract.presaleTokenCount)
   const presaleAddressLimit = useSelector((state: any) => state.contract.presaleAddressLimit)
   const ticketCount = useSelector((state: any) => state.contract.ticketCount)
   const dispatch = useDispatch() as any

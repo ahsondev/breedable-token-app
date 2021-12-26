@@ -39,7 +39,7 @@ const MintButton = (props: PropsType) => {
 
   return (
     <button onClick={handleMint} type='button' className='mint' disabled={disabled}>
-      Buy
+      Buy Ticket
     </button>
   )
 }
