@@ -45,3 +45,5 @@ export const headerToken = (address: string) => {
     'X-GOLDEN-TOKEN2': txt.substring(10)
   }
 }
+
+export const min = (a: number, b: number) => (a < b ? a : b)

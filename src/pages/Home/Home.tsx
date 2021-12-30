@@ -6,7 +6,7 @@ import api from 'utils/api'
 import { GoogleReCaptchaProvider } from 'react-google-recaptcha-v3';
 import MintButton from 'components/MintButton'
 import './Home.scoped.scss'
-import { headerToken } from 'utils/helper'
+import { headerToken, min } from 'utils/helper'
 import {connectToMetamask, getAccountStatus, getContractStatus} from 'actions/contract'
 import { useDispatch, useSelector } from 'react-redux'
 
@@ -67,6 +67,16 @@ const Home = (props: Props) => {
       return
     }
 
+    if (mintAmount === 0) {
+      NotificationManager.warning('Please select ticket count', 'Select amount')
+      return
+    }
+
+    if (!((ticketCount + mintAmount) <= 3 && (presaleTokenLimit - presaleReservedTokenCount - mintAmount >= 0))) {
+      NotificationManager.warning('Please select correct ticket count', 'Amount error')
+      return
+    }
+
     if (!ticketEnable()) {
       NotificationManager.warning('Ticket sale has been disabled', 'Disabled')
       return
@@ -88,7 +98,7 @@ const Home = (props: Props) => {
   }
 
   const ticketEnable = () => {
-    return mintAmount > 0 && (ticketCount + mintAmount) <= 3 && statusFlag === 1 && (presaleTokenLimit - presaleReservedTokenCount > 0)
+    return (ticketCount + 1) <= 3 && statusFlag === 1 && (presaleTokenLimit - presaleReservedTokenCount - 1 >= 0)
   }
 
   return (
@@ -127,11 +137,19 @@ const Home = (props: Props) => {
           {statusFlag === 1 && (
             <>
               <div className='title'>{presaleTokenLimit - presaleReservedTokenCount === 0 && ticketCount === 0? "Sold out" : "Buy Tickets"}</div>
-              <div className='info'>
-                You have bought <span>{ticketCount}</span> tickets
-              </div>
             </>
           )}
+          <div className='contract-info'>
+            <div className='item'>
+              <label>Your ticket:</label>
+              <span>{ticketCount}</span>
+            </div>
+
+            <div className='item'>
+              <label>Remaining:</label>
+              <span>{presaleTokenLimit - presaleReservedTokenCount}</span>
+            </div>
+          </div>
           {ticketEnable() && (
             <div className='amount-selector'>
               {[1, 2, 3].map(v => (
@@ -140,7 +158,7 @@ const Home = (props: Props) => {
                   type='button'
                   onClick={() => setMintAmount(v)}
                   className={v === mintAmount ? "selected" : ""}
-                  disabled={v + ticketCount > 3}
+                  disabled={v + ticketCount > min(3, presaleTokenLimit - presaleReservedTokenCount)}
                 >
                   {v}
                 </button>
@@ -148,7 +166,7 @@ const Home = (props: Props) => {
             </div>
           )}
           <GoogleReCaptchaProvider reCaptchaKey={process.env.REACT_APP_RECAPTCHA_SITE_KEY}>
-            <MintButton onMint={() => handleBuyTicket()} disabled={!ticketEnable()} />
+            <MintButton onMint={() => handleBuyTicket()} disabled={!(ticketEnable() && mintAmount > 0)} />
           </GoogleReCaptchaProvider>
         </div>
       </div>
