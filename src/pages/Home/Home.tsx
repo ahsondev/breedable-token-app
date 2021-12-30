@@ -88,7 +88,7 @@ const Home = (props: Props) => {
   }
 
   const ticketEnable = () => {
-    return ticketCount < 3 && statusFlag === 1 && (presaleTokenLimit - presaleReservedTokenCount > 0)
+    return mintAmount > 0 && (ticketCount + mintAmount) <= 3 && statusFlag === 1 && (presaleTokenLimit - presaleReservedTokenCount > 0)
   }
 
   return (
