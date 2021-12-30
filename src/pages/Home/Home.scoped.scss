@@ -35,8 +35,8 @@
       position: absolute;
       left: calc(50% - 150px);
       width: 300px;
-      top: calc(50% - 100px);
-      height: 200px;
+      top: calc(50% - 130px);
+      height: 260px;
       display: flex;
       align-items: center;
       flex-direction: column;
@@ -58,6 +58,29 @@
         font-size: 20px;
         text-align: center;
         margin: 10px 0 0 0;
+      }
+
+      .amount-selector {
+        display: flex;
+        margin: 10px 0 0 0;
+
+        button {
+          background: linear-gradient(0deg, rgb(170, 170, 170), rgb(107, 107, 107), rgb(197, 197, 197));
+          margin: 0 16px 0 0;
+          width: 42px;
+          height: 40px;
+          border-radius: 50%;
+          padding: unset;
+
+          &:last-child {
+            margin-right: 0;
+          }
+
+          &:hover, &.selected {
+            box-shadow: 0px 0px 10px 1px #ef76ff;
+            background: linear-gradient(0deg, #ef76ff, #b000c7, #f189ff);
+          }
+        }
       }
     }
   }

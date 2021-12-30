@@ -6,9 +6,8 @@ const initialState = {
   price: 0,
   statusFlag: 0,
   presaleReservedTokenCount: 0,
-  presaleReservedAddressCount: 0,
   presaleTokenCount: 0,
-  presaleAddressLimit: 0,
+  presaleTokenLimit: 0,
   ticketCount: 0,
 }
 

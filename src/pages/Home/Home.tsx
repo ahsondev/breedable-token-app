@@ -19,10 +19,11 @@ const Home = (props: Props) => {
   const contract = useSelector((state: any) => state.contract.contract)
   const price = useSelector((state: any) => state.contract.price)
   const statusFlag = useSelector((state: any) => state.contract.statusFlag)
-  const presaleReservedAddressCount = useSelector((state: any) => state.contract.presaleReservedAddressCount)
-  const presaleAddressLimit = useSelector((state: any) => state.contract.presaleAddressLimit)
+  const presaleTokenLimit = useSelector((state: any) => state.contract.presaleTokenLimit)
+  const presaleReservedTokenCount = useSelector((state: any) => state.contract.presaleReservedTokenCount)
   const ticketCount = useSelector((state: any) => state.contract.ticketCount)
   const dispatch = useDispatch() as any
+  const [mintAmount, setMintAmount] = useState(0)
 
   const onTimer = useCallback(async () => {
     dispatch(getContractStatus(contract))
@@ -62,7 +63,12 @@ const Home = (props: Props) => {
     }
 
     if (statusFlag > 1) {
-      NotificationManager.warning('Ticket sale has ended', 'Ticket sale ended')
+      NotificationManager.warning('Ticket sale has beend ended', 'Ticket sale ended')
+      return
+    }
+
+    if (!ticketEnable()) {
+      NotificationManager.warning('Ticket sale has been disabled', 'Disabled')
       return
     }
 
@@ -72,13 +78,17 @@ const Home = (props: Props) => {
         { address: account },
         { headers: headerToken(account) })
       const contractBD = new BrainDance(contract)
-      await contractBD.buyTicket(account, price)
+      await contractBD.buyTicket(account, price, mintAmount)
       NotificationManager.info('Successfully bought a ticket', 'Success')
     } catch (e) {
       console.log(e)
       NotificationManager.error('You failed buying a ticket', 'Failed')
     }
     setLoading(false)
+  }
+
+  const ticketEnable = () => {
+    return ticketCount < 3 && statusFlag === 1 && (presaleTokenLimit - presaleReservedTokenCount > 0)
   }
 
   return (
@@ -116,15 +126,29 @@ const Home = (props: Props) => {
           )}
           {statusFlag === 1 && (
             <>
-              <div className='title'>{presaleAddressLimit - presaleReservedAddressCount === 0 && ticketCount === 0? "Sold out" : "Buy Tickets"}</div>
+              <div className='title'>{presaleTokenLimit - presaleReservedTokenCount === 0 && ticketCount === 0? "Sold out" : "Buy Tickets"}</div>
               <div className='info'>
                 You have bought <span>{ticketCount}</span> tickets
               </div>
             </>
           )}
-          
+          {ticketEnable() && (
+            <div className='amount-selector'>
+              {[1, 2, 3].map(v => (
+                <button
+                  key={v}
+                  type='button'
+                  onClick={() => setMintAmount(v)}
+                  className={v === mintAmount ? "selected" : ""}
+                  disabled={v + ticketCount > 3}
+                >
+                  {v}
+                </button>
+              ))}
+            </div>
+          )}
           <GoogleReCaptchaProvider reCaptchaKey={process.env.REACT_APP_RECAPTCHA_SITE_KEY}>
-            <MintButton onMint={() => handleBuyTicket()} disabled={ticketCount >= 3 || statusFlag !== 1 || (presaleAddressLimit - presaleReservedAddressCount > 0 && ticketCount === 0)} />
+            <MintButton onMint={() => handleBuyTicket()} disabled={!ticketEnable()} />
           </GoogleReCaptchaProvider>
         </div>
       </div>

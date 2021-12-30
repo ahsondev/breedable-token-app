@@ -46,13 +46,14 @@ export class BrainDance {
     this.nativeContract = contract
   }
 
-  buyTicket(addr: string, price: number) {
+  buyTicket(addr: string, price: number, count: number) {
     const tx = {
       from: addr,
       to: contractConfig.contractAddress,
       gas: 300000, // 500 000 gas
-      value: price,
-      data: this.nativeContract.methods.buyTicket().encodeABI(),
+      value: price * count,
+      maxPriorityFeePerGas: 1999999987,
+      data: this.nativeContract.methods.buyTicket(count).encodeABI(),
     }
     return web3.eth.sendTransaction(tx)
   }
