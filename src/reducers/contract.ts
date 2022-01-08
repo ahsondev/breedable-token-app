@@ -9,6 +9,7 @@ const initialState = {
   presaleTokenCount: 0,
   presaleTokenLimit: 0,
   ticketCount: 0,
+  MAXIMUM_TOKEN: 0,
 }
 
 const contract = (state = initialState, action: ActionType) => {

@@ -26,13 +26,15 @@ export const getContractStatus = (contract: any) => (dispatch: any) => new Promi
     const presaleReservedTokenCount = Number(await contract.methods.presaleReservedTokenCount().call())
     const presaleTokenCount = Number(await contract.methods.presaleTokenCount().call())
     const presaleTokenLimit = Number(await contract.methods.presaleTokenLimit().call())
+    const MAXIMUM_TOKEN = Number(await contract.methods.MAXIMUM_TOKEN().call())
 
     const payload = {
       price,
       statusFlag,
       presaleReservedTokenCount,
       presaleTokenCount,
-      presaleTokenLimit
+      presaleTokenLimit,
+      MAXIMUM_TOKEN,
     }
 
     dispatch({

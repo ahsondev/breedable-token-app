@@ -22,6 +22,7 @@ const Home = (props: Props) => {
   const presaleTokenLimit = useSelector((state: any) => state.contract.presaleTokenLimit)
   const presaleReservedTokenCount = useSelector((state: any) => state.contract.presaleReservedTokenCount)
   const ticketCount = useSelector((state: any) => state.contract.ticketCount)
+  const MAXIMUM_TOKEN = useSelector((state: any) => state.contract.MAXIMUM_TOKEN)
   const dispatch = useDispatch() as any
   const [mintAmount, setMintAmount] = useState(0)
 
@@ -72,7 +73,7 @@ const Home = (props: Props) => {
       return
     }
 
-    if (!((ticketCount + mintAmount) <= 3 && (presaleTokenLimit - presaleReservedTokenCount - mintAmount >= 0))) {
+    if (!((ticketCount + mintAmount) <= MAXIMUM_TOKEN && (presaleTokenLimit - presaleReservedTokenCount - mintAmount >= 0))) {
       NotificationManager.warning('Please select correct ticket count', 'Amount error')
       return
     }
@@ -98,7 +99,7 @@ const Home = (props: Props) => {
   }
 
   const ticketEnable = () => {
-    return (ticketCount + 1) <= 3 && statusFlag === 1 && (presaleTokenLimit - presaleReservedTokenCount - 1 >= 0)
+    return (ticketCount + 1) <= MAXIMUM_TOKEN && statusFlag === 1 && (presaleTokenLimit - presaleReservedTokenCount - 1 >= 0)
   }
 
   return (
@@ -152,15 +153,15 @@ const Home = (props: Props) => {
           </div>
           {ticketEnable() && (
             <div className='amount-selector'>
-              {[1, 2, 3].map(v => (
+              {[...Array(MAXIMUM_TOKEN).keys()].map(v => (
                 <button
-                  key={v}
+                  key={v + 1}
                   type='button'
-                  onClick={() => setMintAmount(v)}
-                  className={v === mintAmount ? "selected" : ""}
-                  disabled={v + ticketCount > min(3, presaleTokenLimit - presaleReservedTokenCount)}
+                  onClick={() => setMintAmount(v + 1)}
+                  className={v + 1 === mintAmount ? "selected" : ""}
+                  disabled={v + 1 + ticketCount > min(MAXIMUM_TOKEN, presaleTokenLimit - presaleReservedTokenCount)}
                 >
-                  {v}
+                  {v + 1}
                 </button>
               ))}
             </div>
